@@ -2,6 +2,9 @@
 
 This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
 
+[![crate.io](https://img.shields.io/crates/v/geo-svg.svg)](https://crates.io/crates/geo-svg)
+[![docs.rs](https://docs.rs/geo-svg/badge.svg)](https://docs.rs/geo-svg)
+
 Below is an example of a geometry collection rendered to SVG.
 
 ![example](example.png)

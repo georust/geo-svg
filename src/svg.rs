@@ -1,4 +1,4 @@
-#[derive(Debug, Default, Clone, PartialEq]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Svg {
     pub elements: Vec<String>,
     pub view_box: ViewBox,

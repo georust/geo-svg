@@ -1,10 +1,13 @@
 use super::{svg, ToSvg, ViewBox};
-use geo::{Coordinate, Point, Polygon};
+use geo_types::{
+    Coordinate, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
+    MultiPolygon, Point, Polygon,
+};
 use svg_fmt::{black, green, path, red, Circle, Fill, LineSegment, Stroke, Style};
 
-const STROKE_WIDTH: f64 = 0.000005;
+const STROKE_WIDTH: f64 = 0.1;
 
-impl ToSvg for geo::GeometryCollection<f64> {
+impl ToSvg for GeometryCollection<f64> {
     fn to_svg_str(&self) -> String {
         self.0
             .iter()
@@ -21,39 +24,35 @@ impl ToSvg for geo::GeometryCollection<f64> {
     }
 }
 
-impl ToSvg for geo::Geometry<f64> {
+impl ToSvg for Geometry<f64> {
     fn to_svg_str(&self) -> String {
         match self {
-            geo::Geometry::Point(point) => point.to_svg_str(),
-            geo::Geometry::Line(line) => line.to_svg_str(),
-            geo::Geometry::LineString(line_tring) => line_tring.to_svg_str(),
-            geo::Geometry::Polygon(polygon) => polygon.to_svg_str(),
-            geo::Geometry::MultiPoint(multi_point) => multi_point.to_svg_str(),
-            geo::Geometry::MultiLineString(multi_line_string) => multi_line_string.to_svg_str(),
-            geo::Geometry::MultiPolygon(multi_polygon) => multi_polygon.to_svg_str(),
-            geo::Geometry::GeometryCollection(geometry_collection) => {
-                geometry_collection.to_svg_str()
-            }
+            Geometry::Point(point) => point.to_svg_str(),
+            Geometry::Line(line) => line.to_svg_str(),
+            Geometry::LineString(line_tring) => line_tring.to_svg_str(),
+            Geometry::Polygon(polygon) => polygon.to_svg_str(),
+            Geometry::MultiPoint(multi_point) => multi_point.to_svg_str(),
+            Geometry::MultiLineString(multi_line_string) => multi_line_string.to_svg_str(),
+            Geometry::MultiPolygon(multi_polygon) => multi_polygon.to_svg_str(),
+            Geometry::GeometryCollection(geometry_collection) => geometry_collection.to_svg_str(),
         }
     }
 
     fn view_box(&self) -> svg::ViewBox {
         match self {
-            geo::Geometry::Point(point) => point.view_box(),
-            geo::Geometry::Line(line) => line.view_box(),
-            geo::Geometry::LineString(line_tring) => line_tring.view_box(),
-            geo::Geometry::Polygon(polygon) => polygon.view_box(),
-            geo::Geometry::MultiPoint(multi_point) => multi_point.view_box(),
-            geo::Geometry::MultiLineString(multi_line_string) => multi_line_string.view_box(),
-            geo::Geometry::MultiPolygon(multi_polygon) => multi_polygon.view_box(),
-            geo::Geometry::GeometryCollection(geometry_collection) => {
-                geometry_collection.view_box()
-            }
+            Geometry::Point(point) => point.view_box(),
+            Geometry::Line(line) => line.view_box(),
+            Geometry::LineString(line_tring) => line_tring.view_box(),
+            Geometry::Polygon(polygon) => polygon.view_box(),
+            Geometry::MultiPoint(multi_point) => multi_point.view_box(),
+            Geometry::MultiLineString(multi_line_string) => multi_line_string.view_box(),
+            Geometry::MultiPolygon(multi_polygon) => multi_polygon.view_box(),
+            Geometry::GeometryCollection(geometry_collection) => geometry_collection.view_box(),
         }
     }
 }
 
-impl ToSvg for geo::MultiPolygon<f64> {
+impl ToSvg for MultiPolygon<f64> {
     fn to_svg_str(&self) -> String {
         self.0
             .iter()
@@ -70,7 +69,7 @@ impl ToSvg for geo::MultiPolygon<f64> {
 
 impl ToSvg for Polygon<f64> {
     fn to_svg_str(&self) -> String {
-        let line_string_to_path = |line_string: &geo::LineString<f64>| {
+        let line_string_to_path = |line_string: &LineString<f64>| {
             line_string
                 .points_iter()
                 .fold(None, |path, point| {
@@ -128,7 +127,7 @@ impl ToSvg for Polygon<f64> {
     }
 }
 
-impl ToSvg for geo::MultiLineString<f64> {
+impl ToSvg for MultiLineString<f64> {
     fn to_svg_str(&self) -> String {
         self.0
             .iter()
@@ -145,7 +144,7 @@ impl ToSvg for geo::MultiLineString<f64> {
     }
 }
 
-impl ToSvg for geo::LineString<f64> {
+impl ToSvg for LineString<f64> {
     fn to_svg_str(&self) -> String {
         self.points_iter()
             .fold(None, |path, point| {
@@ -170,7 +169,7 @@ impl ToSvg for geo::LineString<f64> {
     }
 }
 
-impl ToSvg for geo::Line<f64> {
+impl ToSvg for Line<f64> {
     fn to_svg_str(&self) -> String {
         LineSegment {
             x1: self.start.x as f32,
@@ -188,7 +187,7 @@ impl ToSvg for geo::Line<f64> {
     }
 }
 
-impl ToSvg for geo::MultiPoint<f64> {
+impl ToSvg for MultiPoint<f64> {
     fn to_svg_str(&self) -> String {
         self.0.iter().map(|point| point.to_svg_str()).collect()
     }

@@ -3,7 +3,12 @@ name = "geo-svg"
 version = "0.1.0"
 authors = ["Gérald Lelong <gerald.lelong@easymov.fr>"]
 edition = "2018"
+license = "ISC"
+repository = "https://github.com/lelongg/geo-svg"
+description = "Convert geo types to SVG strings for visualization"
+keywords = ["geo", "polygon", "svg", "visualization"]
+categories = ["development-tools::debugging", "graphics", "multimedia::images", "visualization"]
 
 [dependencies]
-geo = "0.12.2"
+geo-types = "0.4.3"
 svg_fmt = "0.4.1"

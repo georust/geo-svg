@@ -1,9 +1,10 @@
 [package]
 name = "geo-svg"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Gérald Lelong <gerald.lelong@easymov.fr>"]
 edition = "2018"
 license = "ISC"
+readme = "README.md"
 repository = "https://github.com/lelongg/geo-svg"
 description = "Convert geo types to SVG strings for visualization"
 keywords = ["geo", "polygon", "svg", "visualization"]

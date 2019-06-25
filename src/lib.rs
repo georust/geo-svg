@@ -2,7 +2,7 @@
 //! 
 //! Below is an example of a geometry collection rendered to SVG.
 //! 
-//! ![example](example.png)
+//! ![example](https://raw.githubusercontent.com/lelongg/geo-svg/master/example.png)
 //!
 //! # Features
 //! 

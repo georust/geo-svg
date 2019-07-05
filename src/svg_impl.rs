@@ -54,10 +54,7 @@ impl ToSvg for Geometry<f64> {
 
 impl ToSvg for MultiPolygon<f64> {
     fn to_svg_str(&self) -> String {
-        self.0
-            .iter()
-            .map(|polygon| dbg!(polygon).to_svg_str())
-            .collect()
+        self.0.iter().map(|polygon| polygon.to_svg_str()).collect()
     }
 
     fn view_box(&self) -> svg::ViewBox {

@@ -10,11 +10,6 @@ description = "Convert geo types to SVG strings for visualization"
 keywords = ["geo", "polygon", "svg", "visualization"]
 categories = ["development-tools::debugging", "graphics", "multimedia::images", "visualization"]
 
-[badges]
-is-it-maintained-issue-resolution = { repository = "lelongg/geo-svg" }
-is-it-maintained-open-issues = { repository = "lelongg/geo-svg" }
-maintenance = { status = "actively-developed" }
-
 [dependencies]
 geo-types = "0.4.3"
 num-traits = "0.2.8"

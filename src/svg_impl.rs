@@ -220,6 +220,34 @@ impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for GeometryCollec
     }
 }
 
+impl<'a, T: ToSvgStr> ToSvgStr for &'a [T] {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.iter()
+            .map(|geometry| geometry.to_svg_str(style))
+            .collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.iter().fold(ViewBox::default(), |view_box, item| {
+            view_box.add(&item.viewbox(style))
+        })
+    }
+}
+
+impl<T: ToSvgStr> ToSvgStr for Vec<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.iter()
+            .map(|geometry| geometry.to_svg_str(style))
+            .collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.iter().fold(ViewBox::default(), |view_box, item| {
+            view_box.add(&item.viewbox(style))
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::{Color, ToSvg};

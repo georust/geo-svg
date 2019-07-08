@@ -23,6 +23,11 @@ impl<'a> Svg<'a> {
         self
     }
 
+    pub fn with_margin(mut self, margin: f32) -> Self {
+        self.viewbox = self.viewbox.with_margin(margin);
+        self
+    }
+
     pub fn with_opacity(mut self, opacity: f32) -> Self {
         self.style.opacity = Some(opacity);
         for sibling in &mut self.siblings {

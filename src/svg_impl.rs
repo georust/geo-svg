@@ -1,229 +1,273 @@
-use super::{svg, ToSvg, ViewBox};
+use crate::{Style, ToSvgStr, ViewBox};
 use geo_types::{
     Coordinate, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
-    MultiPolygon, Point, Polygon,
+    MultiPolygon, Point, Polygon, Rect, Triangle,
 };
-use svg_fmt::{black, green, path, red, Circle, Fill, LineSegment, Stroke, Style};
+use num_traits::{Num, NumCast};
+use std::fmt::Display;
 
-const STROKE_WIDTH: f64 = 0.1;
-
-impl ToSvg for GeometryCollection<f64> {
-    fn to_svg_str(&self) -> String {
-        self.0
-            .iter()
-            .map(|geometry| geometry.to_svg_str())
-            .collect()
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Coordinate<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        Point::from(*self).to_svg_str(style)
     }
 
-    fn view_box(&self) -> svg::ViewBox {
-        self.0
-            .iter()
-            .fold(ViewBox::default(), |view_box, geometry| {
-                view_box.add(&geometry.view_box())
-            })
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        Point::from(*self).viewbox(style)
     }
 }
 
-impl ToSvg for Geometry<f64> {
-    fn to_svg_str(&self) -> String {
-        match self {
-            Geometry::Point(point) => point.to_svg_str(),
-            Geometry::Line(line) => line.to_svg_str(),
-            Geometry::LineString(line_tring) => line_tring.to_svg_str(),
-            Geometry::Polygon(polygon) => polygon.to_svg_str(),
-            Geometry::MultiPoint(multi_point) => multi_point.to_svg_str(),
-            Geometry::MultiLineString(multi_line_string) => multi_line_string.to_svg_str(),
-            Geometry::MultiPolygon(multi_polygon) => multi_polygon.to_svg_str(),
-            Geometry::GeometryCollection(geometry_collection) => geometry_collection.to_svg_str(),
-        }
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Point<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        format!(
+            r#"<circle cx="{x}" cy="{y}" r="{radius}"{style}/>"#,
+            x = self.x(),
+            y = self.y(),
+            radius = style.radius,
+            style = style,
+        )
     }
 
-    fn view_box(&self) -> svg::ViewBox {
-        match self {
-            Geometry::Point(point) => point.view_box(),
-            Geometry::Line(line) => line.view_box(),
-            Geometry::LineString(line_tring) => line_tring.view_box(),
-            Geometry::Polygon(polygon) => polygon.view_box(),
-            Geometry::MultiPoint(multi_point) => multi_point.view_box(),
-            Geometry::MultiLineString(multi_line_string) => multi_line_string.view_box(),
-            Geometry::MultiPolygon(multi_polygon) => multi_polygon.view_box(),
-            Geometry::GeometryCollection(geometry_collection) => geometry_collection.view_box(),
-        }
-    }
-}
-
-impl ToSvg for MultiPolygon<f64> {
-    fn to_svg_str(&self) -> String {
-        self.0.iter().map(|polygon| polygon.to_svg_str()).collect()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.0.iter().fold(ViewBox::default(), |view_box, polygon| {
-            view_box.add(&polygon.view_box())
-        })
-    }
-}
-
-impl ToSvg for Polygon<f64> {
-    fn to_svg_str(&self) -> String {
-        let line_string_to_path = |line_string: &LineString<f64>| {
-            line_string
-                .points_iter()
-                .fold(None, |path, point| {
-                    let path = match path {
-                        Some(path) => path,
-                        None => svg_fmt::path().move_to(point.x() as f32, point.y() as f32),
-                    };
-                    Some(path.line_to(point.x() as f32, point.y() as f32))
-                })
-                .unwrap_or_else(path)
-        };
-
-        let exterior = line_string_to_path(&self.exterior())
-            .fill(Fill::Color(green()))
-            .stroke(Stroke::Color(green(), STROKE_WIDTH as f32))
-            .opacity(0.5)
-            .to_string();
-
-        let interiors = self.interiors().iter().map(|interior| {
-            line_string_to_path(&interior)
-                .fill(Fill::Color(red()))
-                .stroke(Stroke::Color(red(), STROKE_WIDTH as f32))
-                .opacity(0.5)
-                .to_string()
-        });
-
-        let points = self
-            .exterior()
-            .points_iter()
-            .skip(1)
-            .chain(
-                self.interiors()
-                    .iter()
-                    .flat_map(|interior| interior.points_iter().skip(1)),
-            )
-            .flat_map(|point| point.to_svg().elements);
-
-        std::iter::once(exterior)
-            .chain(interiors)
-            .chain(points)
-            .collect::<String>()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.exterior()
-            .points_iter()
-            .chain(
-                self.interiors()
-                    .iter()
-                    .flat_map(|interior| interior.points_iter()),
-            )
-            .fold(svg::ViewBox::default(), |view_box, point| {
-                view_box.add(&point.view_box())
-            })
-    }
-}
-
-impl ToSvg for MultiLineString<f64> {
-    fn to_svg_str(&self) -> String {
-        self.0
-            .iter()
-            .map(|line_string| line_string.to_svg_str())
-            .collect()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.0
-            .iter()
-            .fold(ViewBox::default(), |view_box, line_string| {
-                view_box.add(&line_string.view_box())
-            })
-    }
-}
-
-impl ToSvg for LineString<f64> {
-    fn to_svg_str(&self) -> String {
-        self.points_iter()
-            .fold(None, |path, point| {
-                let path = match path {
-                    Some(path) => path,
-                    None => svg_fmt::path().move_to(point.x() as f32, point.y() as f32),
-                };
-                Some(path.line_to(point.x() as f32, point.y() as f32))
-            })
-            .unwrap_or_else(path)
-            .fill(Fill::None)
-            .stroke(Stroke::Color(black(), STROKE_WIDTH as f32))
-            .opacity(0.5)
-            .to_string()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.points_iter()
-            .fold(svg::ViewBox::default(), |view_box, point| {
-                view_box.add(&point.view_box())
-            })
-    }
-}
-
-impl ToSvg for Line<f64> {
-    fn to_svg_str(&self) -> String {
-        LineSegment {
-            x1: self.start.x as f32,
-            y1: self.start.y as f32,
-            x2: self.end.x as f32,
-            y2: self.end.y as f32,
-            color: black(),
-            width: STROKE_WIDTH as f32,
-        }
-        .to_string()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.start.view_box().add(&self.end.view_box())
-    }
-}
-
-impl ToSvg for MultiPoint<f64> {
-    fn to_svg_str(&self) -> String {
-        self.0.iter().map(|point| point.to_svg_str()).collect()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        self.0.iter().fold(ViewBox::default(), |view_box, point| {
-            view_box.add(&point.view_box())
-        })
-    }
-}
-
-impl ToSvg for Point<f64> {
-    fn to_svg_str(&self) -> String {
-        Circle {
-            x: self.x() as f32,
-            y: self.y() as f32,
-            radius: STROKE_WIDTH as f32,
-            style: Style::default(),
-        }
-        .fill(Fill::Color(black()))
-        .to_string()
-    }
-
-    fn view_box(&self) -> svg::ViewBox {
-        svg::ViewBox::new(
-            (self.x() - STROKE_WIDTH) as f32,
-            (self.y() - STROKE_WIDTH) as f32,
-            (self.x() + STROKE_WIDTH) as f32,
-            (self.y() + STROKE_WIDTH) as f32,
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        let radius = style.radius + style.stroke_width.unwrap_or(1.0);
+        ViewBox::new(
+            NumCast::from(self.x()).unwrap_or(0f32) - radius,
+            NumCast::from(self.y()).unwrap_or(0f32) - radius,
+            NumCast::from(self.x()).unwrap_or(0f32) + radius,
+            NumCast::from(self.y()).unwrap_or(0f32) + radius,
         )
     }
 }
 
-impl ToSvg for Coordinate<f64> {
-    fn to_svg_str(&self) -> String {
-        Point::from(*self).to_svg_str()
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for MultiPoint<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.0.iter().map(|point| point.to_svg_str(style)).collect()
     }
 
-    fn view_box(&self) -> svg::ViewBox {
-        Point::from(*self).view_box()
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.0.iter().fold(ViewBox::default(), |view_box, point| {
+            view_box.add(&point.viewbox(style))
+        })
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Line<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        format!(
+            r#"<path d="M {x1} {y1} L {x2} {y2}"{style}/>"#,
+            x1 = self.start.x,
+            y1 = self.start.y,
+            x2 = self.end.x,
+            y2 = self.end.y,
+            style = style,
+        )
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        let style = Style {
+            radius: 0.0,
+            ..style.clone()
+        };
+        self.start.viewbox(&style).add(&self.end.viewbox(&style))
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for LineString<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.lines().map(|line| line.to_svg_str(style)).collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.lines().fold(ViewBox::default(), |view_box, line| {
+            view_box.add(&line.viewbox(style))
+        })
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for MultiLineString<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.0
+            .iter()
+            .map(|line_string| line_string.to_svg_str(style))
+            .collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.0
+            .iter()
+            .fold(ViewBox::default(), |view_box, line_string| {
+                view_box.add(&line_string.viewbox(style))
+            })
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Polygon<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        use std::fmt::Write;
+        let mut path = String::new();
+        for contour in std::iter::once(self.exterior()).chain(self.interiors().iter()) {
+            let mut points = contour.points_iter();
+            if let Some(first_point) = points.next() {
+                write!(path, "M {} {}", first_point.x(), first_point.y()).unwrap()
+            }
+            for point in points {
+                write!(path, " L {} {}", point.x(), point.y()).unwrap();
+            }
+            write!(path, " Z ").unwrap();
+        }
+
+        format!(
+            r#"<path fill-rule="evenodd" d="{path}"{style}/>"#,
+            path = path,
+            style = style,
+        )
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.exterior()
+            .lines()
+            .chain(
+                self.interiors()
+                    .iter()
+                    .flat_map(|interior| interior.lines()),
+            )
+            .fold(ViewBox::default(), |view_box, line_string| {
+                view_box.add(&line_string.viewbox(style))
+            })
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Rect<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        Polygon::from(*self).to_svg_str(style)
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        Polygon::from(*self).viewbox(style)
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Triangle<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        Polygon::new(self.to_array().iter().cloned().collect(), vec![]).to_svg_str(style)
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        Polygon::new(self.to_array().iter().cloned().collect(), vec![]).viewbox(style)
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for MultiPolygon<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.0
+            .iter()
+            .map(|polygons| polygons.to_svg_str(style))
+            .collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.0
+            .iter()
+            .fold(ViewBox::default(), |view_box, polygons| {
+                view_box.add(&polygons.viewbox(style))
+            })
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for Geometry<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        use Geometry::*;
+        match self {
+            Point(point) => point.to_svg_str(style),
+            Line(line) => line.to_svg_str(style),
+            LineString(line_tring) => line_tring.to_svg_str(style),
+            Polygon(polygon) => polygon.to_svg_str(style),
+            MultiPoint(multi_point) => multi_point.to_svg_str(style),
+            MultiLineString(multi_line_string) => multi_line_string.to_svg_str(style),
+            MultiPolygon(multi_polygon) => multi_polygon.to_svg_str(style),
+            GeometryCollection(geometry_collection) => geometry_collection.to_svg_str(style),
+        }
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        use Geometry::*;
+        match self {
+            Point(point) => point.viewbox(style),
+            Line(line) => line.viewbox(style),
+            LineString(line_tring) => line_tring.viewbox(style),
+            Polygon(polygon) => polygon.viewbox(style),
+            MultiPoint(multi_point) => multi_point.viewbox(style),
+            MultiLineString(multi_line_string) => multi_line_string.viewbox(style),
+            MultiPolygon(multi_polygon) => multi_polygon.viewbox(style),
+            GeometryCollection(geometry_collection) => geometry_collection.viewbox(style),
+        }
+    }
+}
+
+impl<T: Num + NumCast + Copy + PartialOrd + Display> ToSvgStr for GeometryCollection<T> {
+    fn to_svg_str(&self, style: &Style) -> String {
+        self.0
+            .iter()
+            .map(|geometry| geometry.to_svg_str(style))
+            .collect()
+    }
+
+    fn viewbox(&self, style: &Style) -> ViewBox {
+        self.0
+            .iter()
+            .fold(ViewBox::default(), |view_box, geometry| {
+                view_box.add(&geometry.viewbox(style))
+            })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{Color, ToSvg};
+    use geo_types::{LineString, Point, Polygon};
+
+    #[test]
+    fn test_point() {
+        println!(
+            "{}",
+            Point::new(0.0, 0.0)
+                .to_svg()
+                .fill(Color::Named("red"))
+                .with_radius(10.0)
+                .with_stroke_color(Color::Named("black"))
+                .and(
+                    Point::new(50.0, 0.0)
+                        .to_svg()
+                        .with_radius(5.0)
+                        .with_stroke_color(Color::Named("blue"))
+                )
+                .with_stroke_width(1.0)
+                .with_opacity(0.5)
+                .with_fill_opacity(0.5)
+                .fill(Color::Named("green"))
+        );
+    }
+
+    #[test]
+    fn test_polygon() {
+        println!(
+            "{}",
+            Polygon::new(
+                LineString(vec![
+                    (210.0, 0.0).into(),
+                    (300.0, 0.0).into(),
+                    (300.0, 90.0).into(),
+                    (210.0, 90.0).into()
+                ]),
+                vec![LineString(vec![
+                    (230.0, 20.0).into(),
+                    (280.0, 20.0).into(),
+                    (280.0, 70.0).into(),
+                    (230.0, 70.0).into()
+                ])]
+            )
+            .to_svg()
+            .fill(Color::Named("black"))
+            .with_stroke_color(Color::Named("red"))
+        );
     }
 }

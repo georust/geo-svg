@@ -17,4 +17,4 @@ maintenance = { status = "actively-developed" }
 
 [dependencies]
 geo-types = "0.4.3"
-svg_fmt = "0.4.1"
+num-traits = "0.2.8"

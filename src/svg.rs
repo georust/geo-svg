@@ -1,80 +1,118 @@
-use crate::viewbox::ViewBox;
+use crate::{Color, Style, ToSvgStr, ViewBox};
+use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, Default, Clone, PartialEq)]
-pub struct Svg {
-    pub elements: Vec<Svg>,
-    pub view_box: ViewBox,
+#[derive(Clone)]
+pub struct Svg<'a> {
+    pub items: Vec<&'a ToSvgStr>,
+    pub siblings: Vec<Svg<'a>>,
+    pub viewbox: ViewBox,
+    pub style: Style,
 }
 
-impl Svg {
-    pub fn and(mut self, other: &impl ToSvg) -> Self {
-        self.elements.push(other.to_svg());
-        self.view_box = self.view_box.add(&other.view_box());
+impl<'a> Svg<'a> {
+    pub fn and(mut self, sibling: Svg<'a>) -> Self {
+        self.siblings.push(sibling);
         self
     }
 
-    pub fn with_margin(mut self, margin: f32) -> Self {
-        self.view_box = self.view_box.with_margin(margin);
-        self
-    }
-}
-
-impl std::fmt::Display for Svg {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use std::fmt::Write;
-        let mut buffer = String::new();
-        let view_box = self.view_box;
-        write!(
-            buffer,
-            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="{x} {y} {w} {h}">"#,
-            x = view_box.min_x(),
-            y = view_box.min_y(),
-            w = view_box.width(),
-            h = view_box.height(),
-        )?;
-        write!(
-            buffer,
-            "{}",
-            std::iter::once(self)
-                .chain(self.elements.iter())
-                .map(ToSvg::to_svg_str)
-                .collect::<String>()
-        )?;
-        write!(buffer, "</svg>")?;
-        write!(f, "{}", buffer)
-    }
-}
-
-pub trait ToSvg {
-    fn to_svg(&self) -> Svg {
-        Svg {
-            elements: Vec::new(),
-            view_box: self.view_box(),
+    pub fn with_style(mut self, style: &Style) -> Self {
+        self.style = style.clone();
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_style(style);
         }
+        self
     }
 
-    fn to_svg_str(&self) -> String;
-    fn view_box(&self) -> ViewBox;
+    pub fn with_opacity(mut self, opacity: f32) -> Self {
+        self.style.opacity = Some(opacity);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_opacity(opacity);
+        }
+        self
+    }
+
+    pub fn fill(mut self, fill: Color) -> Self {
+        self.style.fill = Some(fill);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().fill(fill);
+        }
+        self
+    }
+
+    pub fn with_fill_opacity(mut self, fill_opacity: f32) -> Self {
+        self.style.fill_opacity = Some(fill_opacity);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_fill_opacity(fill_opacity);
+        }
+        self
+    }
+
+    pub fn with_stroke_width(mut self, stroke_width: f32) -> Self {
+        self.style.stroke_width = Some(stroke_width);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_width(stroke_width);
+        }
+        self
+    }
+
+    pub fn with_stroke_opacity(mut self, stroke_opacity: f32) -> Self {
+        self.style.stroke_opacity = Some(stroke_opacity);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_opacity(stroke_opacity);
+        }
+        self
+    }
+
+    pub fn with_radius(mut self, radius: f32) -> Self {
+        self.style.radius = radius;
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_radius(radius);
+        }
+        self
+    }
+
+    pub fn with_stroke_color(mut self, stroke_color: Color) -> Self {
+        self.style.stroke_color = Some(stroke_color);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_color(stroke_color);
+        }
+        self
+    }
+
+    pub fn svg_str(&self) -> String {
+        self.items
+            .iter()
+            .map(|item| item.to_svg_str(&self.style))
+            .chain(self.siblings.iter().map(Svg::svg_str))
+            .collect()
+    }
+
+    pub fn viewbox(&self) -> ViewBox {
+        self.items
+            .iter()
+            .map(|item| item.viewbox(&self.style))
+            .chain(self.siblings.iter().map(Svg::viewbox))
+            .fold(self.viewbox, |viewbox, other_viewbox| {
+                viewbox.add(&other_viewbox)
+            })
+    }
 }
 
-impl ToSvg for Svg {
-    fn to_svg_str(&self) -> String {
-        self.elements.iter().cloned().collect()
-    }
-
-    fn view_box(&self) -> ViewBox {
-        self.view_box
-    }
-}
-
-impl<T: ToSvg> ToSvg for &[T] {
-    fn to_svg_str(&self) -> String {
-        self.iter().map(ToSvg::to_svg_str).collect()
-    }
-
-    fn view_box(&self) -> ViewBox {
-        self.iter().fold(ViewBox::default(), |view_box, svg| {
-            view_box.add(&svg.view_box())
-        })
+impl<'a> Display for Svg<'a> {
+    fn fmt(&self, fmt: &mut Formatter) -> Result {
+        let viewbox = self.viewbox();
+        write!(
+            fmt,
+            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="{x} {y} {w} {h}">{content}</svg>"#,
+            x = viewbox.min_x(),
+            y = viewbox.min_y(),
+            w = viewbox.width(),
+            h = viewbox.height(),
+            content = self.items
+                .iter()
+                .map(|item| item.to_svg_str(&self.style))
+                .chain(self.siblings.iter().map(Svg::svg_str))
+                .collect::<String>()
+        )
     }
 }

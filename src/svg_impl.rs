@@ -259,7 +259,7 @@ mod tests {
             "{}",
             Point::new(0.0, 0.0)
                 .to_svg()
-                .fill(Color::Named("red"))
+                .with_fill_color(Color::Named("red"))
                 .with_radius(10.0)
                 .with_stroke_color(Color::Named("black"))
                 .and(
@@ -271,7 +271,7 @@ mod tests {
                 .with_stroke_width(1.0)
                 .with_opacity(0.5)
                 .with_fill_opacity(0.5)
-                .fill(Color::Named("green"))
+                .with_fill_color(Color::Named("green"))
         );
     }
 
@@ -294,7 +294,7 @@ mod tests {
                 ])]
             )
             .to_svg()
-            .fill(Color::Named("black"))
+            .with_fill_color(Color::Named("black"))
             .with_stroke_color(Color::Named("red"))
         );
     }

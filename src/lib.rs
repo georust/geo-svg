@@ -29,7 +29,7 @@
 //!     .to_svg()
 //!     .with_radius(2.0)
 //!     .and(line.to_svg().with_stroke_width(2.5))
-//!     .fill(Color::Named("red"))
+//!     .with_fill_color(Color::Named("red"))
 //!     .with_stroke_color(Color::Rgb(200, 0, 100))
 //!     .with_fill_opacity(0.7);
 //!

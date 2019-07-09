@@ -28,6 +28,15 @@ impl<'a> Svg<'a> {
         self
     }
 
+    pub fn with_color(mut self, color: Color) -> Self {
+        self.style.fill = Some(color);
+        self.style.stroke_color = Some(color);
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_color(color);
+        }
+        self
+    }
+
     pub fn with_opacity(mut self, opacity: f32) -> Self {
         self.style.opacity = Some(opacity);
         for sibling in &mut self.siblings {
@@ -36,10 +45,10 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn fill(mut self, fill: Color) -> Self {
+    pub fn with_fill_color(mut self, fill: Color) -> Self {
         self.style.fill = Some(fill);
         for sibling in &mut self.siblings {
-            *sibling = sibling.clone().fill(fill);
+            *sibling = sibling.clone().with_fill_color(fill);
         }
         self
     }
@@ -68,18 +77,18 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn with_radius(mut self, radius: f32) -> Self {
-        self.style.radius = radius;
-        for sibling in &mut self.siblings {
-            *sibling = sibling.clone().with_radius(radius);
-        }
-        self
-    }
-
     pub fn with_stroke_color(mut self, stroke_color: Color) -> Self {
         self.style.stroke_color = Some(stroke_color);
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_stroke_color(stroke_color);
+        }
+        self
+    }
+
+    pub fn with_radius(mut self, radius: f32) -> Self {
+        self.style.radius = radius;
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_radius(radius);
         }
         self
     }

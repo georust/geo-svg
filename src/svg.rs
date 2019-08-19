@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone)]
 pub struct Svg<'a> {
-    pub items: Vec<&'a ToSvgStr>,
+    pub items: Vec<&'a dyn ToSvgStr>,
     pub siblings: Vec<Svg<'a>>,
     pub viewbox: ViewBox,
     pub style: Style,

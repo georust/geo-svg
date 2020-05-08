@@ -122,7 +122,8 @@ impl<'a> Display for Svg<'a> {
             y = viewbox.min_y(),
             w = viewbox.width(),
             h = viewbox.height(),
-            content = self.items
+            content = self
+                .items
                 .iter()
                 .map(|item| item.to_svg_str(&self.style))
                 .chain(self.siblings.iter().map(Svg::svg_str))

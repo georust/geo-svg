@@ -11,5 +11,5 @@ keywords = ["geo", "polygon", "svg", "visualization"]
 categories = ["development-tools::debugging", "graphics", "multimedia::images", "visualization"]
 
 [dependencies]
-geo-types = "0.4.3"
-num-traits = "0.2.8"
+geo-types = "0.5.0"
+num-traits = "0.2.11"

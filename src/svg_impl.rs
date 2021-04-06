@@ -1,12 +1,11 @@
 use crate::{Style, ToSvgStr, ViewBox};
 use geo_types::{
-    Coordinate, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
-    MultiPolygon, Point, Polygon, Rect, Triangle,
+    CoordNum, Coordinate, Geometry, GeometryCollection, Line, LineString, MultiLineString,
+    MultiPoint, MultiPolygon, Point, Polygon, Rect, Triangle,
 };
-use num_traits::{Num, NumCast};
-use std::fmt::{Debug, Display};
+use num_traits::NumCast;
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Coordinate<T> {
+impl<T: CoordNum> ToSvgStr for Coordinate<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         Point::from(*self).to_svg_str(style)
     }
@@ -16,10 +15,10 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Coordi
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Point<T> {
+impl<T: CoordNum> ToSvgStr for Point<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         format!(
-            r#"<circle cx="{x}" cy="{y}" r="{radius}"{style}/>"#,
+            r#"<circle cx="{x:?}" cy="{y:?}" r="{radius}"{style}/>"#,
             x = self.x(),
             y = self.y(),
             radius = style.radius,
@@ -38,7 +37,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Point<
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiPoint<T> {
+impl<T: CoordNum> ToSvgStr for MultiPoint<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.0.iter().map(|point| point.to_svg_str(style)).collect()
     }
@@ -50,10 +49,10 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiP
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Line<T> {
+impl<T: CoordNum> ToSvgStr for Line<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         format!(
-            r#"<path d="M {x1} {y1} L {x2} {y2}"{style}/>"#,
+            r#"<path d="M {x1:?} {y1:?} L {x2:?} {y2:?}"{style}/>"#,
             x1 = self.start.x,
             y1 = self.start.y,
             x2 = self.end.x,
@@ -71,7 +70,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Line<T
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for LineString<T> {
+impl<T: CoordNum> ToSvgStr for LineString<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.lines().map(|line| line.to_svg_str(style)).collect()
     }
@@ -83,7 +82,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for LineSt
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiLineString<T> {
+impl<T: CoordNum> ToSvgStr for MultiLineString<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.0
             .iter()
@@ -100,17 +99,17 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiL
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Polygon<T> {
+impl<T: CoordNum> ToSvgStr for Polygon<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         use std::fmt::Write;
         let mut path = String::new();
         for contour in std::iter::once(self.exterior()).chain(self.interiors().iter()) {
             let mut points = contour.points_iter();
             if let Some(first_point) = points.next() {
-                write!(path, "M {} {}", first_point.x(), first_point.y()).unwrap()
+                write!(path, "M {:?} {:?}", first_point.x(), first_point.y()).unwrap()
             }
             for point in points {
-                write!(path, " L {} {}", point.x(), point.y()).unwrap();
+                write!(path, " L {:?} {:?}", point.x(), point.y()).unwrap();
             }
             write!(path, " Z ").unwrap();
         }
@@ -136,7 +135,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Polygo
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Rect<T> {
+impl<T: CoordNum> ToSvgStr for Rect<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         Polygon::from(*self).to_svg_str(style)
     }
@@ -146,7 +145,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Rect<T
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Triangle<T> {
+impl<T: CoordNum> ToSvgStr for Triangle<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         Polygon::new(self.to_array().iter().cloned().collect(), vec![]).to_svg_str(style)
     }
@@ -156,7 +155,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Triang
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiPolygon<T> {
+impl<T: CoordNum> ToSvgStr for MultiPolygon<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.0
             .iter()
@@ -173,7 +172,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for MultiP
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Geometry<T> {
+impl<T: CoordNum> ToSvgStr for Geometry<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         use Geometry::*;
         match self {
@@ -207,7 +206,7 @@ impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for Geomet
     }
 }
 
-impl<T: Num + NumCast + Copy + PartialOrd + Debug + Display> ToSvgStr for GeometryCollection<T> {
+impl<T: CoordNum> ToSvgStr for GeometryCollection<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.0
             .iter()

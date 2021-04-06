@@ -34,7 +34,7 @@
 //!     .with_fill_opacity(0.7);
 //!
 //! println!("{}", svg);
-//! # assert_eq!(svg.to_string(), r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>"#);
+//! # assert_eq!(svg.to_string(), r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10.0" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>"#);
 //! # }
 //! ```
 //!

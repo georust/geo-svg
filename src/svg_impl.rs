@@ -1,11 +1,11 @@
 use crate::{Style, ToSvgStr, ViewBox};
 use geo_types::{
-    CoordNum, Coordinate, Geometry, GeometryCollection, Line, LineString, MultiLineString,
-    MultiPoint, MultiPolygon, Point, Polygon, Rect, Triangle,
+    Coord, CoordNum, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
+    MultiPolygon, Point, Polygon, Rect, Triangle,
 };
 use num_traits::NumCast;
 
-impl<T: CoordNum> ToSvgStr for Coordinate<T> {
+impl<T: CoordNum> ToSvgStr for Coord<T> {
     fn to_svg_str(&self, style: &Style) -> String {
         Point::from(*self).to_svg_str(style)
     }
@@ -104,7 +104,7 @@ impl<T: CoordNum> ToSvgStr for Polygon<T> {
         use std::fmt::Write;
         let mut path = String::new();
         for contour in std::iter::once(self.exterior()).chain(self.interiors().iter()) {
-            let mut points = contour.points_iter();
+            let mut points = contour.points();
             if let Some(first_point) = points.next() {
                 write!(path, "M {:?} {:?}", first_point.x(), first_point.y()).unwrap()
             }

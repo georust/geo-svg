@@ -12,4 +12,3 @@ categories = ["development-tools::debugging", "graphics", "multimedia::images", 
 
 [dependencies]
 geo-types = "0.7.11"
-num-traits = "0.2.17"

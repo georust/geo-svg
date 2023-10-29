@@ -48,6 +48,7 @@
 //! [`to_svg`]: svg/trait.ToSvg.html#method.to_svg
 
 mod color;
+mod combine;
 mod style;
 mod svg;
 mod svg_impl;
@@ -57,6 +58,7 @@ mod to_svg_str;
 mod viewbox;
 
 pub use color::*;
+pub use combine::*;
 pub use style::*;
 pub use svg::Svg;
 pub use svg_impl::*;

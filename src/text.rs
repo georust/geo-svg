@@ -54,7 +54,7 @@ where
             position: Coord { x, y },
             font_size,
         } = self;
-        format!(r#"<text font-size="{font_size}" x="{x} y="{y}">{text}</text>"#)
+        format!(r#"<text font-size="{font_size}" x="{x}" y="{y}">{text}</text>"#)
     }
 
     // we can probably do better here by calculating a viewbox based on font and font size

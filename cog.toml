@@ -1,5 +1,5 @@
-from_latest_tag = false
-ignore_merge_commits = false
+from_latest_tag = true
+ignore_merge_commits = true
 branch_whitelist = []
 pre_bump_hooks = []
 post_bump_hooks = []
@@ -10,7 +10,10 @@ post_package_bump_hooks = []
 
 [changelog]
 path = "CHANGELOG.md"
-authors = []
+authors = [
+  { signature = "Gérald Lelong", username = "lelongg" },
+  { signature = "RobWalt", username = "RobWalt" }
+]
 
 [bump_profiles]
 

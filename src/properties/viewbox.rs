@@ -16,7 +16,7 @@ impl ViewBox {
         }
     }
 
-    pub fn add(&self, other: &Self) -> Self {
+    pub fn and(&self, other: &Self) -> Self {
         Self {
             min_x: Self::min_option(self.min_x, other.min_x),
             min_y: Self::min_option(self.min_y, other.min_y),

@@ -21,13 +21,13 @@ impl<T: CoordNum> ToSvgStr for Point<T> {
             r#"<circle cx="{x:?}" cy="{y:?}" r="{radius}"{style}/>"#,
             x = self.x(),
             y = self.y(),
-            radius = style.radius,
+            radius = style.radius.unwrap_or(1.0),
             style = style,
         )
     }
 
     fn viewbox(&self, style: &Style) -> ViewBox {
-        let radius = style.radius + style.stroke_width.unwrap_or(1.0);
+        let radius = style.radius.unwrap_or(1.0) + style.stroke_width.unwrap_or(1.0);
         ViewBox::new(
             NumCast::from(self.x()).unwrap_or(0f32) - radius,
             NumCast::from(self.y()).unwrap_or(0f32) - radius,
@@ -44,7 +44,7 @@ impl<T: CoordNum> ToSvgStr for MultiPoint<T> {
 
     fn viewbox(&self, style: &Style) -> ViewBox {
         self.0.iter().fold(ViewBox::default(), |view_box, point| {
-            view_box.add(&point.viewbox(style))
+            view_box.and(&point.viewbox(style))
         })
     }
 }
@@ -63,10 +63,10 @@ impl<T: CoordNum> ToSvgStr for Line<T> {
 
     fn viewbox(&self, style: &Style) -> ViewBox {
         let style = Style {
-            radius: 0.0,
+            radius: Some(0.0),
             ..style.clone()
         };
-        self.start.viewbox(&style).add(&self.end.viewbox(&style))
+        self.start.viewbox(&style).and(&self.end.viewbox(&style))
     }
 }
 
@@ -77,7 +77,7 @@ impl<T: CoordNum> ToSvgStr for LineString<T> {
 
     fn viewbox(&self, style: &Style) -> ViewBox {
         self.lines().fold(ViewBox::default(), |view_box, line| {
-            view_box.add(&line.viewbox(style))
+            view_box.and(&line.viewbox(style))
         })
     }
 }
@@ -94,7 +94,7 @@ impl<T: CoordNum> ToSvgStr for MultiLineString<T> {
         self.0
             .iter()
             .fold(ViewBox::default(), |view_box, line_string| {
-                view_box.add(&line_string.viewbox(style))
+                view_box.and(&line_string.viewbox(style))
             })
     }
 }
@@ -130,7 +130,7 @@ impl<T: CoordNum> ToSvgStr for Polygon<T> {
                     .flat_map(|interior| interior.lines()),
             )
             .fold(ViewBox::default(), |view_box, line_string| {
-                view_box.add(&line_string.viewbox(style))
+                view_box.and(&line_string.viewbox(style))
             })
     }
 }
@@ -167,7 +167,7 @@ impl<T: CoordNum> ToSvgStr for MultiPolygon<T> {
         self.0
             .iter()
             .fold(ViewBox::default(), |view_box, polygons| {
-                view_box.add(&polygons.viewbox(style))
+                view_box.and(&polygons.viewbox(style))
             })
     }
 }
@@ -218,7 +218,7 @@ impl<T: CoordNum> ToSvgStr for GeometryCollection<T> {
         self.0
             .iter()
             .fold(ViewBox::default(), |view_box, geometry| {
-                view_box.add(&geometry.viewbox(style))
+                view_box.and(&geometry.viewbox(style))
             })
     }
 }
@@ -232,7 +232,7 @@ impl<'a, T: ToSvgStr> ToSvgStr for &'a [T] {
 
     fn viewbox(&self, style: &Style) -> ViewBox {
         self.iter().fold(ViewBox::default(), |view_box, item| {
-            view_box.add(&item.viewbox(style))
+            view_box.and(&item.viewbox(style))
         })
     }
 }
@@ -246,59 +246,7 @@ impl<T: ToSvgStr> ToSvgStr for Vec<T> {
 
     fn viewbox(&self, style: &Style) -> ViewBox {
         self.iter().fold(ViewBox::default(), |view_box, item| {
-            view_box.add(&item.viewbox(style))
+            view_box.and(&item.viewbox(style))
         })
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::{Color, ToSvg};
-    use geo::{LineString, Point, Polygon};
-
-    #[test]
-    fn test_point() {
-        println!(
-            "{}",
-            Point::new(0.0, 0.0)
-                .to_svg()
-                .with_fill_color(Color::Named("red"))
-                .with_radius(10.0)
-                .with_stroke_color(Color::Named("black"))
-                .and(
-                    Point::new(50.0, 0.0)
-                        .to_svg()
-                        .with_radius(5.0)
-                        .with_stroke_color(Color::Named("blue"))
-                )
-                .with_stroke_width(1.0)
-                .with_opacity(0.5)
-                .with_fill_opacity(0.5)
-                .with_fill_color(Color::Named("green"))
-        );
-    }
-
-    #[test]
-    fn test_polygon() {
-        println!(
-            "{}",
-            Polygon::new(
-                LineString(vec![
-                    (210.0, 0.0).into(),
-                    (300.0, 0.0).into(),
-                    (300.0, 90.0).into(),
-                    (210.0, 90.0).into()
-                ]),
-                vec![LineString(vec![
-                    (230.0, 20.0).into(),
-                    (280.0, 20.0).into(),
-                    (280.0, 70.0).into(),
-                    (230.0, 70.0).into()
-                ])]
-            )
-            .to_svg()
-            .with_fill_color(Color::Named("black"))
-            .with_stroke_color(Color::Named("red"))
-        );
     }
 }

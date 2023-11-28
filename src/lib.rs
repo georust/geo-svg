@@ -1,4 +1,9 @@
-//! This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+//! # geo-svg
+//!
+//! This crate is a lib to generate SVG strings from [geo](https://docs.rs/geo/latest/geo/).
+//!
+//! [![crate.io](https://img.shields.io/crates/v/geo-svg.svg)](https://crates.io/crates/geo-svg)
+//! [![docs.rs](https://docs.rs/geo-svg/badge.svg)](https://docs.rs/geo-svg)
 //!
 //! Below is an example of a geometry collection rendered to SVG.
 //!
@@ -6,63 +11,54 @@
 //!
 //! # Features
 //!
-//! - [GeometryCollection](https://docs.rs/geo-types/0.4.3/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.4.3/geo_types/enum.Geometry.html) are supported
+//! - [GeometryCollection](https://docs.rs/geo/latest/geo/geometry/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo/latest/geo/geometry/enum.Geometry.html) are supported
 //! - the viewport size is automatically computed to contain all shapes
 //! - style and formatting options are available
 //!
 //! # Example
 //!
 //! The following will show how to convert a line to a SVG string.  
-//! The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+//! The [`add_shape`] method is provided by the [`SVGDocument`]/[`SVGDocumentBuilder`]/[`SVGDocumentPart`] struct which accepts all [geo](https://docs.rs/geo/latest/geo) types.
 //!
 //! ```
-//! # fn main() {
-//! use geo_types::{Coordinate, Line, Point};
-//! use geo_svg::{Color, ToSvg};
+//! use geo_svg::{Color, SVGDocument, Stylable};
+//! use geo::{Coord, Line, Point};
+//!
 //! let point = Point::new(10.0, 28.1);
 //! let line = Line::new(
-//!     Coordinate { x: 114.19, y: 22.26 },
-//!     Coordinate { x: 15.93, y: -15.76 },
+//!     Coord { x: 114.19, y: 22.26, },
+//!     Coord { x: 15.93, y: -15.76, },
 //! );
 //!
-//! let svg = point
-//!     .to_svg()
+//! let svg = SVGDocument::style_builder()
 //!     .with_radius(2.0)
-//!     .and(line.to_svg().with_stroke_width(2.5))
+//!     .finish_style()
+//!     .add_shape(&point)
+//!     .finish_shapes()
+//!     .and(
+//!         SVGDocument::style_builder()
+//!             .with_stroke_width(2.5)
+//!             .finish_style()
+//!             .add_shape(&line)
+//!             .finish_shapes(),
+//!     )
 //!     .with_fill_color(Color::Named("red"))
 //!     .with_stroke_color(Color::Rgb(200, 0, 100))
 //!     .with_fill_opacity(0.7);
 //!
 //! println!("{}", svg);
-//! # assert_eq!(svg.to_string(), r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10.0" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>"#);
-//! # }
+//!
+//! let expect = r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"  fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"><circle cx="10.0" cy="28.1" r="2"/><path d="M 114.19 22.26 L 15.93 -15.76" stroke-width="2.5"/></svg>"#;
+//!
+//! assert_eq!(expect, svg.render().as_str());
 //! ```
-//!
-//! ## Result
-//!
-//! ```xml
-//! <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>
-//! ```
-//!
-//! [`ToSvg`]: svg/trait.ToSvg.html
-//! [`to_svg`]: svg/trait.ToSvg.html#method.to_svg
 
-mod color;
-mod combine;
-mod style;
-mod svg;
-mod svg_impl;
+mod properties;
+mod svg_document;
+mod svg_trait;
 mod text;
-mod to_svg;
-mod to_svg_str;
-mod viewbox;
 
-pub use color::*;
-pub use combine::*;
-pub use style::*;
-pub use svg::Svg;
-pub use svg_impl::*;
+pub use properties::*;
+pub use svg_document::*;
+pub use svg_trait::*;
 pub use text::*;
-pub use to_svg::*;
-pub use to_svg_str::*;
-pub use viewbox::ViewBox;

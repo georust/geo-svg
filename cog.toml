@@ -1,7 +1,12 @@
 from_latest_tag = true
 ignore_merge_commits = true
 branch_whitelist = []
-pre_bump_hooks = []
+pre_bump_hooks = [
+    "cargo build --release",
+    "cargo nextest run --release",
+    "echo 'bumping from {{latest}} to {{version}}'",
+    "cargo bump {{version}}",
+]
 post_bump_hooks = []
 pre_package_bump_hooks = []
 post_package_bump_hooks = []

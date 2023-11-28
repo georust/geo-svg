@@ -1,5 +1,5 @@
 use crate::{Style, ToSvgStr, ViewBox};
-use geo_types::{
+use geo::{
     Coord, CoordNum, Geometry, GeometryCollection, Line, LineString, MultiLineString, MultiPoint,
     MultiPolygon, Point, Polygon, Rect, Triangle,
 };
@@ -254,7 +254,7 @@ impl<T: ToSvgStr> ToSvgStr for Vec<T> {
 #[cfg(test)]
 mod tests {
     use crate::{Color, ToSvg};
-    use geo_types::{LineString, Point, Polygon};
+    use geo::{LineString, Point, Polygon};
 
     #[test]
     fn test_point() {

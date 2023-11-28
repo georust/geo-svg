@@ -1,28 +1,20 @@
-use crate::Color;
+use crate::{Color, Stylable};
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct Style {
-    pub opacity: Option<f32>,
-    pub fill: Option<Color>,
-    pub fill_opacity: Option<f32>,
-    pub stroke_color: Option<Color>,
-    pub stroke_width: Option<f32>,
-    pub stroke_opacity: Option<f32>,
-    pub radius: f32,
+    pub(crate) opacity: Option<f32>,
+    pub(crate) fill_color: Option<Color>,
+    pub(crate) fill_opacity: Option<f32>,
+    pub(crate) stroke_color: Option<Color>,
+    pub(crate) stroke_width: Option<f32>,
+    pub(crate) stroke_opacity: Option<f32>,
+    pub(crate) radius: Option<f32>,
 }
 
-impl Default for Style {
-    fn default() -> Self {
-        Self {
-            opacity: None,
-            fill: None,
-            fill_opacity: None,
-            stroke_color: None,
-            stroke_width: None,
-            stroke_opacity: None,
-            radius: 1.0,
-        }
+impl Stylable for Style {
+    fn get_style_mut(&mut self) -> &mut Style {
+        self
     }
 }
 
@@ -31,7 +23,7 @@ impl Display for Style {
         if let Some(opacity) = self.opacity {
             write!(fmt, r#" opacity="{}""#, opacity)?;
         }
-        if let Some(fill) = self.fill {
+        if let Some(fill) = self.fill_color {
             write!(fmt, r#" fill="{}""#, fill)?;
         }
         if let Some(fill_opacity) = self.fill_opacity {

@@ -1,6 +1,6 @@
 # geo-svg
 
-This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+This crate is a lib to generate SVG strings from [geo](https://docs.rs/geo/latest/geo/).
 
 [![crate.io](https://img.shields.io/crates/v/geo-svg.svg)](https://crates.io/crates/geo-svg)
 [![docs.rs](https://docs.rs/geo-svg/badge.svg)](https://docs.rs/geo-svg)
@@ -9,42 +9,48 @@ Below is an example of a geometry collection rendered to SVG.
 
 ![example](https://raw.githubusercontent.com/lelongg/geo-svg/master/example.png)
 
-## Features
+# Features
 
-- [GeometryCollection](https://docs.rs/geo-types/0.4.3/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.4.3/geo_types/enum.Geometry.html) are supported
+- [GeometryCollection](https://docs.rs/geo/latest/geo/geometry/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo/latest/geo/geometry/enum.Geometry.html) are supported
 - the viewport size is automatically computed to contain all shapes
 - style and formatting options are available
 
-## Example
+# Example
 
-The following will show how to convert a line to a SVG string.
-The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+The following will show how to convert a line to a SVG string.  
+The [`add_shape`] method is provided by the [`SVGDocument`]/[`SVGDocumentBuilder`]/[`SVGDocumentPart`] struct which accepts all [geo](https://docs.rs/geo/latest/geo) types.
 
-```rust
-use geo_types::{Coordinate, Line, Point};
-use geo_svg::{Color, ToSvg};
-let point = Point::new(10.0, 28.1);
-let line = Line::new(
-    Coordinate { x: 114.19, y: 22.26 },
-    Coordinate { x: 15.93, y: -15.76 },
-);
-
-let svg = point
-    .to_svg()
-    .with_radius(2.0)
-    .and(line.to_svg().with_stroke_width(2.5))
-    .with_fill_color(Color::Named("red"))
-    .with_stroke_color(Color::Rgb(200, 0, 100))
-    .with_fill_opacity(0.7);
-
-println!("{}", svg);
 ```
+fn main() {
+  use geo_svg::{Color, SVGDocument, Stylable};
+  use geo::{Coord, Line, Point};
 
-### Result
+  let point = Point::new(10.0, 28.1);
+  let line = Line::new(
+      Coord { x: 114.19, y: 22.26, },
+      Coord { x: 15.93, y: -15.76, },
+  );
 
-```xml
-<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>
+  let svg = SVGDocument::style_builder()
+      .with_radius(2.0)
+      .finish_style()
+      .add_shape(&point)
+      .finish_shapes()
+      .and(
+          SVGDocument::style_builder()
+              .with_stroke_width(2.5)
+              .finish_style()
+              .add_shape(&line)
+              .finish_shapes(),
+      )
+      .with_fill_color(Color::Named("red"))
+      .with_stroke_color(Color::Rgb(200, 0, 100))
+      .with_fill_opacity(0.7);
+
+  println!("{}", svg);
+
+  let expect = r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"  fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"><circle cx="10.0" cy="28.1" r="2"/><path d="M 114.19 22.26 L 15.93 -15.76" stroke-width="2.5"/></svg>"#;
+
+  assert_eq!(expect, svg.render().as_str());
+}
 ```
-
-[`ToSvg`]: svg/trait.ToSvg.html
-[`to_svg`]: svg/trait.ToSvg.html#method.to_svg

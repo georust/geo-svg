@@ -17,7 +17,7 @@
 //!
 //! ```
 //! # fn main() {
-//! use geo_types::{Coordinate, Line, Point};
+//! use geo::{Coordinate, Line, Point};
 //! use geo_svg::{Color, ToSvg};
 //! let point = Point::new(10.0, 28.1);
 //! let line = Line::new(

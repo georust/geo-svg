@@ -1,7 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
+## 0.6.2 - 2024-02-14
+#### Bug Fixes
+- partially fix `Color` which would misinterpret numbers like `0000FF` as `#FF` b09033d30c1cbb1886ae69b6ced3545be82a78e2 - vargad
+- fix broken doc test - 861bfb76c94876bc370a688f57da12fb06719084 - vargad
 
 - - -
+
 ## 0.6.0 - 2023-11-28
 #### Bug Fixes
 - fix typo - (158c459) - RobWalt

@@ -1,6 +1,6 @@
 [package]
 name = "geo-svg"
-version = "0.6.2"
+version = "0.6.3"
 authors = ["Gérald Lelong <gerald.lelong@easymov.fr>", "RobWalt <robwalter96@gmail.com>"]
 edition = "2021"
 license = "ISC"

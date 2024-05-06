@@ -72,26 +72,23 @@ impl<T: CoordNum> ToSvgStr for Line<T> {
 
 impl<T: CoordNum> ToSvgStr for LineString<T> {
     fn to_svg_str(&self, style: &Style) -> String {
-        if self.0.len() < 2 {
-            return "".into();
+        let len = self.0.len();
+        if len < 2 {
+            return String::default();
         }
-        let mut point_iter = if self.is_closed() {
-            // If this is a closed LineString, omit the last element and instead output 'z' to
-            // close the loop.
-            self.0[..self.0.len() - 1].iter()
-        } else {
-            self.0.iter()
-        };
-        // .next() is guaranteed to be Some(...) because the length was checked above.
-        let first_point = point_iter.next().unwrap();
-        let mut path_string = format!("M {x:?} {y:?}", x = first_point.x, y = first_point.y,);
-        for point in point_iter {
-            path_string += &format!(" L {x:?} {y:?}", x = point.x, y = point.y,);
-        }
-        if self.is_closed() {
-            path_string += " Z";
-        }
-        format!(r#"<path d="{path_string}"{style}/>"#,)
+        let delta = if self.is_closed() { 1 } else { 0 };
+        let path_string = self
+            .0
+            .iter()
+            .take(len.saturating_sub(delta))
+            .map(|p| format!("{x:?} {y:?}", x = p.x, y = p.y))
+            .enumerate()
+            .fold(String::from("M"), |s, (i, p)| {
+                let sep = if i == 0 { " " } else { " L " };
+                s + sep + p.as_str()
+            });
+        let end = if self.is_closed() { " Z" } else { "" };
+        format!(r#"<path d="{path}"{style}/>"#, path = path_string + end)
     }
 
     fn viewbox(&self, style: &Style) -> ViewBox {

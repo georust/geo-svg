@@ -82,21 +82,13 @@ impl<T: CoordNum> ToSvgStr for LineString<T> {
         } else {
             self.0.iter()
         };
-        // .next() is guarunteed to be Some(...) because the length was checked above.
+        // .next() is guaranteed to be Some(...) because the length was checked above.
         let first_point = point_iter.next().unwrap();
-        let mut path_string = format!(
-            "M {x:?} {y:?}",
-            x = first_point.x,
-            y = first_point.y,
-        );
+        let mut path_string = format!("M {x:?} {y:?}", x = first_point.x, y = first_point.y,);
         for point in point_iter {
-            path_string += &format!(
-                " L {x:?} {y:?}",
-                x = point.x,
-                y = point.y,
-            );
+            path_string += &format!(" L {x:?} {y:?}", x = point.x, y = point.y,);
         }
-        if self.is_closed() { 
+        if self.is_closed() {
             path_string += " Z";
         }
         format!(
@@ -339,18 +331,17 @@ mod tests {
 
     #[test]
     fn test_closed_line_string() {
-        let closed_line_string_result = 
-            LineString(vec![
-                (210.0, 0.0).into(),
-                (300.0, 0.0).into(),
-                (300.0, 90.0).into(),
-                (210.0, 90.0).into(),
-                (210.0, 0.0).into(),
-            ])
-            .to_svg()
-            .with_fill_color(Color::Named("black"))
-            .with_stroke_color(Color::Named("red"))
-            .to_string();
+        let closed_line_string_result = LineString(vec![
+            (210.0, 0.0).into(),
+            (300.0, 0.0).into(),
+            (300.0, 90.0).into(),
+            (210.0, 90.0).into(),
+            (210.0, 0.0).into(),
+        ])
+        .to_svg()
+        .with_fill_color(Color::Named("black"))
+        .with_stroke_color(Color::Named("red"))
+        .to_string();
         assert_eq!(
             closed_line_string_result,
             r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="209 -1 92 92"><path d="M 210.0 0.0 L 300.0 0.0 L 300.0 90.0 L 210.0 90.0 Z" fill="black" stroke="red"/></svg>"#
@@ -359,21 +350,19 @@ mod tests {
 
     #[test]
     fn test_open_line_string() {
-        let closed_line_string_result = 
-            LineString(vec![
-                (210.0, 0.0).into(),
-                (300.0, 0.0).into(),
-                (300.0, 90.0).into(),
-                (210.0, 90.0).into(),
-            ])
-            .to_svg()
-            .with_fill_color(Color::Named("black"))
-            .with_stroke_color(Color::Named("red"))
-            .to_string();
+        let closed_line_string_result = LineString(vec![
+            (210.0, 0.0).into(),
+            (300.0, 0.0).into(),
+            (300.0, 90.0).into(),
+            (210.0, 90.0).into(),
+        ])
+        .to_svg()
+        .with_fill_color(Color::Named("black"))
+        .with_stroke_color(Color::Named("red"))
+        .to_string();
         assert_eq!(
             closed_line_string_result,
             r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="209 -1 92 92"><path d="M 210.0 0.0 L 300.0 0.0 L 300.0 90.0 L 210.0 90.0" fill="black" stroke="red"/></svg>"#
         )
     }
-
 }

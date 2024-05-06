@@ -91,15 +91,7 @@ impl<T: CoordNum> ToSvgStr for LineString<T> {
         if self.is_closed() {
             path_string += " Z";
         }
-        format!(
-            r#"<path d="{path_string}"{style}/>"#,
-            path_string = path_string,
-            style = Style {
-                fill: None,
-                fill_opacity: Some(0.0),
-                ..style.clone()
-            }
-        )
+        format!(r#"<path d="{path_string}"{style}/>"#,)
     }
 
     fn viewbox(&self, style: &Style) -> ViewBox {

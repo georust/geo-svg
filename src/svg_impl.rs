@@ -72,7 +72,23 @@ impl<T: CoordNum> ToSvgStr for Line<T> {
 
 impl<T: CoordNum> ToSvgStr for LineString<T> {
     fn to_svg_str(&self, style: &Style) -> String {
-        self.lines().map(|line| line.to_svg_str(style)).collect()
+        let len = self.0.len();
+        if len < 2 {
+            return String::default();
+        }
+        let delta = if self.is_closed() { 1 } else { 0 };
+        let path_string = self
+            .0
+            .iter()
+            .take(len.saturating_sub(delta))
+            .map(|p| format!("{x:?} {y:?}", x = p.x, y = p.y))
+            .enumerate()
+            .fold(String::from("M"), |s, (i, p)| {
+                let sep = if i == 0 { " " } else { " L " };
+                s + sep + p.as_str()
+            });
+        let end = if self.is_closed() { " Z" } else { "" };
+        format!(r#"<path d="{path}"{style}/>"#, path = path_string + end)
     }
 
     fn viewbox(&self, style: &Style) -> ViewBox {
@@ -300,5 +316,42 @@ mod tests {
             .with_fill_color(Color::Named("black"))
             .with_stroke_color(Color::Named("red"))
         );
+    }
+
+    #[test]
+    fn test_closed_line_string() {
+        let closed_line_string_result = LineString(vec![
+            (210.0, 0.0).into(),
+            (300.0, 0.0).into(),
+            (300.0, 90.0).into(),
+            (210.0, 90.0).into(),
+            (210.0, 0.0).into(),
+        ])
+        .to_svg()
+        .with_fill_color(Color::Named("black"))
+        .with_stroke_color(Color::Named("red"))
+        .to_string();
+        assert_eq!(
+            closed_line_string_result,
+            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="209 -1 92 92"><path d="M 210.0 0.0 L 300.0 0.0 L 300.0 90.0 L 210.0 90.0 Z" fill="black" stroke="red"/></svg>"#
+        )
+    }
+
+    #[test]
+    fn test_open_line_string() {
+        let closed_line_string_result = LineString(vec![
+            (210.0, 0.0).into(),
+            (300.0, 0.0).into(),
+            (300.0, 90.0).into(),
+            (210.0, 90.0).into(),
+        ])
+        .to_svg()
+        .with_fill_color(Color::Named("black"))
+        .with_stroke_color(Color::Named("red"))
+        .to_string();
+        assert_eq!(
+            closed_line_string_result,
+            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="209 -1 92 92"><path d="M 210.0 0.0 L 300.0 0.0 L 300.0 90.0 L 210.0 90.0" fill="black" stroke="red"/></svg>"#
+        )
     }
 }

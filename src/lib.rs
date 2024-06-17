@@ -1,4 +1,4 @@
-//! This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+//! This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.7.13/geo_types/).
 //!
 //! Below is an example of a geometry collection rendered to SVG.
 //!
@@ -6,23 +6,23 @@
 //!
 //! # Features
 //!
-//! - [GeometryCollection](https://docs.rs/geo-types/0.4.3/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.4.3/geo_types/enum.Geometry.html) are supported
+//! - [GeometryCollection](https://docs.rs/geo-types/0.7.13/geo_types/geometry/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.7.13/geo_types/enum.Geometry.html) are supported
 //! - the viewport size is automatically computed to contain all shapes
 //! - style and formatting options are available
 //!
 //! # Example
 //!
 //! The following will show how to convert a line to a SVG string.  
-//! The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+//! The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.7.13/geo_types/).
 //!
 //! ```
 //! # fn main() {
-//! use geo::{Coordinate, Line, Point};
+//! use geo::{Coord, Line, Point};
 //! use geo_svg::{Color, ToSvg};
 //! let point = Point::new(10.0, 28.1);
 //! let line = Line::new(
-//!     Coordinate { x: 114.19, y: 22.26 },
-//!     Coordinate { x: 15.93, y: -15.76 },
+//!     Coord { x: 114.19, y: 22.26 },
+//!     Coord { x: 15.93, y: -15.76 },
 //! );
 //!
 //! let svg = point
@@ -61,7 +61,6 @@ pub use color::*;
 pub use combine::*;
 pub use style::*;
 pub use svg::Svg;
-pub use svg_impl::*;
 pub use text::*;
 pub use to_svg::*;
 pub use to_svg_str::*;

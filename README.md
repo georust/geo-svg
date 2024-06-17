@@ -1,6 +1,6 @@
 # geo-svg
 
-This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+This crate is a lib to generate SVG strings from [geo-types](https://docs.rs/geo-types/0.7.13/geo_types/).
 
 [![crate.io](https://img.shields.io/crates/v/geo-svg.svg)](https://crates.io/crates/geo-svg)
 [![docs.rs](https://docs.rs/geo-svg/badge.svg)](https://docs.rs/geo-svg)
@@ -11,14 +11,14 @@ Below is an example of a geometry collection rendered to SVG.
 
 ## Features
 
-- [GeometryCollection](https://docs.rs/geo-types/0.4.3/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.4.3/geo_types/enum.Geometry.html) are supported
+- [GeometryCollection](https://docs.rs/geo-types/0.7.13/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.7.13/geo_types/enum.Geometry.html) are supported
 - the viewport size is automatically computed to contain all shapes
 - style and formatting options are available
 
 ## Example
 
 The following will show how to convert a line to a SVG string.
-The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.4.3/geo_types/).
+The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.7.13/geo_types/).
 
 ```rust
 use geo_types::{Coordinate, Line, Point};

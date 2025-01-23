@@ -1,4 +1,4 @@
-use crate::{Color, LineCap, Style, ToSvgStr, ViewBox};
+use crate::{Color, LineCap, LineJoin, Style, ToSvgStr, ViewBox};
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone)]
@@ -97,6 +97,14 @@ impl<'a> Svg<'a> {
         self.style.stroke_linecap = Some(linecap.clone());
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_stroke_linecap(linecap.clone());
+        }
+        self
+    }
+
+    pub fn with_stroke_linejoin(mut self, linejoin: LineJoin) -> Self {
+        self.style.stroke_linejoin = Some(linejoin.clone());
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_linejoin(linejoin.clone());
         }
         self
     }

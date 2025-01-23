@@ -15,6 +15,13 @@ impl Default for LineCap {
 }
 
 #[derive(Debug, Clone, PartialEq)]
+pub enum LineJoin {
+    Miter,
+    Round,
+    Bevel,
+}
+
+#[derive(Debug, Clone, PartialEq)]
 pub struct Style {
     pub opacity: Option<f32>,
     pub fill: Option<Color>,
@@ -24,6 +31,7 @@ pub struct Style {
     pub stroke_opacity: Option<f32>,
     pub stroke_dasharray: Option<Vec<f32>>,
     pub stroke_linecap: Option<LineCap>,
+    pub stroke_linejoin: Option<LineJoin>,
     pub radius: f32,
 }
 
@@ -38,6 +46,7 @@ impl Default for Style {
             stroke_opacity: None,
             stroke_dasharray: None,
             stroke_linecap: None,
+            stroke_linejoin: None,
             radius: 1.0,
         }
     }
@@ -82,6 +91,17 @@ impl Display for Style {
                     LineCap::Butt => "butt",
                     LineCap::Round => "round",
                     LineCap::Square => "square",
+                }
+            )?;
+        }
+        if let Some(stroke_linejoin) = &self.stroke_linejoin {
+            write!(
+                fmt,
+                r#" stroke-linejoin="{}""#,
+                match stroke_linejoin {
+                    LineJoin::Miter => "miter",
+                    LineJoin::Round => "round",
+                    LineJoin::Bevel => "bevel",
                 }
             )?;
         }

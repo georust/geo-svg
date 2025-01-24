@@ -1,17 +1,12 @@
 use crate::Color;
 use std::fmt::{Display, Formatter, Result};
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub enum LineCap {
+   #[default]
     Butt,
     Round,
     Square,
-}
-
-impl Default for LineCap {
-    fn default() -> Self {
-        LineCap::Butt
-    }
 }
 
 #[derive(Debug, Clone, PartialEq)]

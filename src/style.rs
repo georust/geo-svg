@@ -9,7 +9,7 @@ pub enum LineCap {
     Square,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum LineJoin {
     Miter,
     Round,

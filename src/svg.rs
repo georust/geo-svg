@@ -1,4 +1,4 @@
-use crate::{Color, Style, ToSvgStr, ViewBox};
+use crate::{Color, LineCap, LineJoin, Style, ToSvgStr, ViewBox};
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone)]
@@ -81,6 +81,30 @@ impl<'a> Svg<'a> {
         self.style.stroke_color = Some(stroke_color);
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_stroke_color(stroke_color);
+        }
+        self
+    }
+
+    pub fn with_stroke_dasharray(mut self, dasharray: Vec<f32>) -> Self {
+        self.style.stroke_dasharray = Some(dasharray.clone());
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_dasharray(dasharray.clone());
+        }
+        self
+    }
+
+    pub fn with_stroke_linecap(mut self, linecap: LineCap) -> Self {
+        self.style.stroke_linecap = Some(linecap.clone());
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_linecap(linecap.clone());
+        }
+        self
+    }
+
+    pub fn with_stroke_linejoin(mut self, linejoin: LineJoin) -> Self {
+        self.style.stroke_linejoin = Some(linejoin.clone());
+        for sibling in &mut self.siblings {
+            *sibling = sibling.clone().with_stroke_linejoin(linejoin.clone());
         }
         self
     }

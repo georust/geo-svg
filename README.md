@@ -11,7 +11,7 @@ Below is an example of a geometry collection rendered to SVG.
 
 ## Features
 
-- [GeometryCollection](https://docs.rs/geo-types/0.7.13/geo_types/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.7.13/geo_types/enum.Geometry.html) are supported
+- [GeometryCollection](https://docs.rs/geo-types/0.7.13/geo_types/geometry/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.7.13/geo_types/geometry/enum.Geometry.html) are supported
 - the viewport size is automatically computed to contain all shapes
 - style and formatting options are available
 
@@ -46,5 +46,5 @@ println!("{}", svg);
 <svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="7 -18.26 109.69 49.36"><circle cx="10" cy="28.1" r="2" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)"/><path d="M 114.19 22.26 L 15.93 -15.76" fill="red" fill-opacity="0.7" stroke="rgb(200,0,100)" stroke-width="2.5"/></svg>
 ```
 
-[`ToSvg`]: svg/trait.ToSvg.html
-[`to_svg`]: svg/trait.ToSvg.html#method.to_svg
+[`ToSvg`]: https://docs.rs/geo-svg-io/latest/geo_svg_io/geo_svg_writer/trait.ToSvg.html
+[`to_svg`]: https://docs.rs/geo-svg-io/latest/geo_svg_io/geo_svg_writer/trait.ToSvg.html#tymethod.to_svg

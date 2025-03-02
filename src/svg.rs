@@ -96,17 +96,17 @@ impl<'a> Svg<'a> {
     }
 
     pub fn with_stroke_linecap(mut self, linecap: LineCap) -> Self {
-        self.style.stroke_linecap = Some(linecap.clone());
+        self.style.stroke_linecap = Some(linecap);
         for sibling in &mut self.siblings {
-            *sibling = sibling.clone().with_stroke_linecap(linecap.clone());
+            *sibling = sibling.clone().with_stroke_linecap(linecap);
         }
         self
     }
 
     pub fn with_stroke_linejoin(mut self, linejoin: LineJoin) -> Self {
-        self.style.stroke_linejoin = Some(linejoin.clone());
+        self.style.stroke_linejoin = Some(linejoin);
         for sibling in &mut self.siblings {
-            *sibling = sibling.clone().with_stroke_linejoin(linejoin.clone());
+            *sibling = sibling.clone().with_stroke_linejoin(linejoin);
         }
         self
     }
@@ -148,7 +148,7 @@ impl<'a> Svg<'a> {
     }
 }
 
-impl<'a> Display for Svg<'a> {
+impl Display for Svg<'_> {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         let viewbox = self.viewbox();
         let w = viewbox.width();

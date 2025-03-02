@@ -239,7 +239,7 @@ impl<T: CoordNum> ToSvgStr for GeometryCollection<T> {
     }
 }
 
-impl<'a, T: ToSvgStr> ToSvgStr for &'a [T] {
+impl<T: ToSvgStr> ToSvgStr for &[T] {
     fn to_svg_str(&self, style: &Style) -> String {
         self.iter()
             .map(|geometry| geometry.to_svg_str(style))

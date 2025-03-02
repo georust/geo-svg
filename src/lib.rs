@@ -55,6 +55,7 @@ mod svg_impl;
 mod text;
 mod to_svg;
 mod to_svg_str;
+mod unit;
 mod viewbox;
 
 pub use color::*;
@@ -64,4 +65,5 @@ pub use svg::Svg;
 pub use text::*;
 pub use to_svg::*;
 pub use to_svg_str::*;
+pub use unit::Unit;
 pub use viewbox::ViewBox;

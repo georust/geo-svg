@@ -1,4 +1,4 @@
-use crate::{Color, LineCap, LineJoin, Style, ToSvgStr, ViewBox};
+use crate::{Color, LineCap, LineJoin, Style, ToSvgStr, Unit, ViewBox};
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone)]
@@ -7,6 +7,8 @@ pub struct Svg<'a> {
     pub siblings: Vec<Svg<'a>>,
     pub viewbox: ViewBox,
     pub style: Style,
+    pub width: Option<Unit>,
+    pub height: Option<Unit>,
 }
 
 impl<'a> Svg<'a> {
@@ -94,17 +96,17 @@ impl<'a> Svg<'a> {
     }
 
     pub fn with_stroke_linecap(mut self, linecap: LineCap) -> Self {
-        self.style.stroke_linecap = Some(linecap.clone());
+        self.style.stroke_linecap = Some(linecap);
         for sibling in &mut self.siblings {
-            *sibling = sibling.clone().with_stroke_linecap(linecap.clone());
+            *sibling = sibling.clone().with_stroke_linecap(linecap);
         }
         self
     }
 
     pub fn with_stroke_linejoin(mut self, linejoin: LineJoin) -> Self {
-        self.style.stroke_linejoin = Some(linejoin.clone());
+        self.style.stroke_linejoin = Some(linejoin);
         for sibling in &mut self.siblings {
-            *sibling = sibling.clone().with_stroke_linejoin(linejoin.clone());
+            *sibling = sibling.clone().with_stroke_linejoin(linejoin);
         }
         self
     }
@@ -134,24 +136,39 @@ impl<'a> Svg<'a> {
                 viewbox.add(&other_viewbox)
             })
     }
+
+    /// Typically only `set_width` or `set_height is necessary.
+    /// The other quantity is computed to match the aspect ratio of the view box.
+    pub fn set_width(&mut self, width: Unit) {
+        self.width = Some(width);
+    }
+
+    /// Typically only `set_width` or `set_height is necessary.
+    /// The other quantity is computed to match the aspect ratio of the view box.
+    pub fn set_height(&mut self, height: Unit) {
+        self.height = Some(height);
+    }
 }
 
-impl<'a> Display for Svg<'a> {
+impl Display for Svg<'_> {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         let viewbox = self.viewbox();
+        let w = viewbox.width();
+        let h = viewbox.height();
         write!(
             fmt,
-            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="{x} {y} {w} {h}">{content}</svg>"#,
+            r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="{x} {y} {w} {h}""#,
             x = viewbox.min_x(),
             y = viewbox.min_y(),
-            w = viewbox.width(),
-            h = viewbox.height(),
-            content = self
-                .items
-                .iter()
-                .map(|item| item.to_svg_str(&self.style))
-                .chain(self.siblings.iter().map(Svg::svg_str))
-                .collect::<String>()
-        )
+        )?;
+        if self.width.is_some() || self.height.is_some() {
+            write!(
+                fmt,
+                r#" width="{width}" height="{height}""#,
+                width = self.width.unwrap_or_else(|| self.height.unwrap().scale(w / h)),
+                height = self.height.unwrap_or_else(|| self.width.unwrap().scale(h / w)),
+            )?;
+        }
+        write!(fmt, r#">{content}</svg>"#, content = self.svg_str())
     }
 }

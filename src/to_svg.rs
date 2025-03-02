@@ -11,6 +11,8 @@ impl<T: ToSvgStr> ToSvg for T {
             siblings: vec![],
             viewbox: ViewBox::default(),
             style: Style::default(),
+            width: None,
+            height: None,
         }
     }
 }

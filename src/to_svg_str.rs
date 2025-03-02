@@ -5,7 +5,7 @@ pub trait ToSvgStr {
     fn viewbox(&self, style: &Style) -> ViewBox;
 }
 
-impl<'a> ToSvgStr for Svg<'a> {
+impl ToSvgStr for Svg<'_> {
     fn to_svg_str(&self, style: &Style) -> String {
         self.clone().with_style(style).to_string()
     }

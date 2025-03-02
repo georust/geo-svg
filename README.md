@@ -14,6 +14,7 @@ Below is an example of a geometry collection rendered to SVG.
 - [GeometryCollection](https://docs.rs/geo-types/0.7.13/geo_types/geometry/struct.GeometryCollection.html) and all variants of [Geometry](https://docs.rs/geo-types/0.7.13/geo_types/geometry/enum.Geometry.html) are supported
 - the viewport size is automatically computed to contain all shapes
 - style and formatting options are available
+- the image size can be set in absolute units such as cm or px.
 
 ## Example
 

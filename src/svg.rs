@@ -137,12 +137,14 @@ impl<'a> Svg<'a> {
             })
     }
 
-    /// Typically only `set_width` or `set_height is necessary. The other quantity is computed to match the aspect ratio of the view box.
+    /// Typically only `set_width` or `set_height is necessary.
+    /// The other quantity is computed to match the aspect ratio of the view box.
     pub fn set_width(&mut self, width: Unit) {
         self.width = Some(width);
     }
 
-    /// Typically only `set_width` or `set_height is necessary. The other quantity is computed to match the aspect ratio of the view box.
+    /// Typically only `set_width` or `set_height is necessary.
+    /// The other quantity is computed to match the aspect ratio of the view box.
     pub fn set_height(&mut self, height: Unit) {
         self.height = Some(height);
     }
@@ -158,16 +160,15 @@ impl Display for Svg<'_> {
             r#"<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" viewBox="{x} {y} {w} {h}""#,
             x = viewbox.min_x(),
             y = viewbox.min_y(),
-        ).and_then(|_| if self.width.is_some() || self.height.is_some() {
-                write!(
-                    fmt,
-                    r#" width="{width}" height="{height}""#,
-                    width = self.width.unwrap_or_else(|| self.height.unwrap().scale(w / h)),
-                    height = self.height.unwrap_or_else(|| self.width.unwrap().scale(h / w)),
-                )
-            } else {
-                Ok(())
-            }.and_then(|_| write!(fmt, r#">{content}</svg>"#, content = self.svg_str()))
-        )
+        )?;
+        if self.width.is_some() || self.height.is_some() {
+            write!(
+                fmt,
+                r#" width="{width}" height="{height}""#,
+                width = self.width.unwrap_or_else(|| self.height.unwrap().scale(w / h)),
+                height = self.height.unwrap_or_else(|| self.width.unwrap().scale(h / w)),
+            )?;
+        }
+        write!(fmt, r#">{content}</svg>"#, content = self.svg_str())
     }
 }

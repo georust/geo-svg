@@ -25,21 +25,21 @@ pub enum Unit {
 
 impl Unit {
     /// raw value with no units
-    pub fn value(&self) -> f32 {
+    pub fn value(self) -> f32 {
         match self {
-            Self::Centimeter(value) => *value,
-            Self::Inch(value) => *value,
-            Self::None(value) => *value,
-            Self::Millimeter(value) => *value,
-            Self::Pica(value) => *value,
-            Self::Pixel(value) => *value,
-            Self::Point(value) => *value,
-            Self::QuarterMillimeter(value) => *value,
+            Self::Centimeter(value) => value,
+            Self::Inch(value) => value,
+            Self::None(value) => value,
+            Self::Millimeter(value) => value,
+            Self::Pica(value) => value,
+            Self::Pixel(value) => value,
+            Self::Point(value) => value,
+            Self::QuarterMillimeter(value) => value,
         }
     }
 
     /// abbreviated symbol of the unit
-    pub fn symbol(&self) -> &'static str {
+    pub fn symbol(self) -> &'static str {
         match self {
             Self::Centimeter(_) => "cm",
             Self::Inch(_) => "in",
@@ -52,7 +52,7 @@ impl Unit {
         }
     }
 
-    pub fn scale(&self, factor: f32) -> Self {
+    pub fn scale(self, factor: f32) -> Self {
         match self {
             Self::Centimeter(value) => Self::Centimeter(value * factor),
             Self::Inch(value) => Self::Inch(value * factor),

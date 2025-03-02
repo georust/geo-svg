@@ -21,34 +21,28 @@ impl Display for Color {
     }
 }
 
-
 #[cfg(test)]
-mod tests
-{
+mod tests {
     use super::*;
 
     #[test]
-    fn test_named()
-    {
+    fn test_named() {
         assert_eq!(format!("{}", Color::Named("red")), "red");
     }
 
     #[test]
-    fn test_rgb()
-    {
+    fn test_rgb() {
         assert_eq!(format!("{}", Color::Rgb(255, 0, 0)), "rgb(255,0,0)");
     }
 
     #[test]
-    fn test_hex()
-    {
+    fn test_hex() {
         assert_eq!(format!("{}", Color::Hex(0xFF0000)), "#FF0000");
         assert_eq!(format!("{}", Color::Hex(0xFF)), "#0000FF");
     }
 
     #[test]
-    fn test_hsl()
-    {
+    fn test_hsl() {
         assert_eq!(format!("{}", Color::Hsl(0, 100, 50)), "hsl(0,100%,50%)");
     }
 }

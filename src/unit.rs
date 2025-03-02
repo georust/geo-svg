@@ -68,6 +68,11 @@ impl Unit {
 
 impl Display for Unit {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
-        write!(fmt, "{value}{symbol}", value = self.value(), symbol = self.symbol())
+        write!(
+            fmt,
+            "{value}{symbol}",
+            value = self.value(),
+            symbol = self.symbol()
+        )
     }
 }

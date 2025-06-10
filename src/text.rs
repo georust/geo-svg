@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use geo::{Coord, CoordNum};
+use geo_types::{Coord, CoordNum};
 
 use crate::{Style, ToSvgStr, ViewBox};
 

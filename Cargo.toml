@@ -1,15 +1,23 @@
 [package]
 name = "geo-svg"
 version = "0.7.3"
-authors = ["Gérald Lelong <gerald.lelong@easymov.fr>", "RobWalt <robwalter96@gmail.com>"]
+authors = [
+    "Gérald Lelong <gerald.lelong@easymov.fr>",
+    "RobWalt <robwalter96@gmail.com>",
+]
 edition = "2021"
 license = "ISC"
 readme = "README.md"
 repository = "https://github.com/georust/geo-svg"
 description = "Convert geo types to SVG strings for visualization"
 keywords = ["geo", "polygon", "svg", "visualization"]
-categories = ["development-tools::debugging", "graphics", "multimedia::images", "visualization"]
+categories = [
+    "development-tools::debugging",
+    "graphics",
+    "multimedia::images",
+    "visualization",
+]
 
 [dependencies]
-geo = { version = "0.30.0", default-features = false }
+geo-types = "0.7"
 num-traits = "0.2.17"

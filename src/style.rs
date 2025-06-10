@@ -5,10 +5,10 @@ use std::fmt::{Display, Formatter, Result};
 ///
 /// Example:
 /// ```
-/// use geo::Point;
+/// use geo_types::Point;
 /// use geo_svg::{Color, LineCap, ToSvg};
 ///
-/// let point = geo::Point::new(0.0, 0.0);
+/// let point = geo_types::Point::new(0.0, 0.0);
 /// let svg_point = point
 ///     .to_svg()
 ///     .with_radius(20.0)
@@ -46,13 +46,13 @@ pub enum LineCap {
 ///
 /// Example:
 /// ```
-/// use geo::{Triangle};
+/// use geo_types::{Triangle};
 /// use geo_svg::{Color, LineJoin, ToSvg};
 ///
 /// let triangle = Triangle::new(
-///     geo::Coord { x: 0.0, y: 0.0 },
-///     geo::Coord { x: 10.0, y: 0.0 },
-///     geo::Coord { x: 5.0, y: 10.0 },
+///     geo_types::Coord { x: 0.0, y: 0.0 },
+///     geo_types::Coord { x: 10.0, y: 0.0 },
+///     geo_types::Coord { x: 5.0, y: 10.0 },
 /// );
 /// let svg_triangle = triangle
 ///     .to_svg()

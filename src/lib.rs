@@ -12,12 +12,12 @@
 //!
 //! # Example
 //!
-//! The following will show how to convert a line to a SVG string.  
+//! The following will show how to convert a line to a SVG string.
 //! The [`to_svg`] method is provided by the [`ToSvg`] trait which is implemented for all [geo-types](https://docs.rs/geo-types/0.7.13/geo_types/).
 //!
 //! ```
 //! # fn main() {
-//! use geo::{Coord, Line, Point};
+//! use geo_types::{Coord, Line, Point};
 //! use geo_svg::{Color, ToSvg};
 //! let point = Point::new(10.0, 28.1);
 //! let line = Line::new(

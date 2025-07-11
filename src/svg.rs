@@ -165,8 +165,12 @@ impl Display for Svg<'_> {
             write!(
                 fmt,
                 r#" width="{width}" height="{height}""#,
-                width = self.width.unwrap_or_else(|| self.height.unwrap().scale(w / h)),
-                height = self.height.unwrap_or_else(|| self.width.unwrap().scale(h / w)),
+                width = self
+                    .width
+                    .unwrap_or_else(|| self.height.unwrap().scale(w / h)),
+                height = self
+                    .height
+                    .unwrap_or_else(|| self.width.unwrap().scale(h / w)),
             )?;
         }
         write!(fmt, r#">{content}</svg>"#, content = self.svg_str())

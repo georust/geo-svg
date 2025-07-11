@@ -5,7 +5,7 @@ authors = [
     "Gérald Lelong <gerald.lelong@easymov.fr>",
     "RobWalt <robwalter96@gmail.com>",
 ]
-edition = "2021"
+edition = "2024"
 license = "ISC"
 readme = "README.md"
 repository = "https://github.com/georust/geo-svg"

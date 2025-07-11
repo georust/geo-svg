@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file. See [conven
 
 ## Unreleased
 
+- Updated to rust 2024 edition
 - Use geo-types instead of geo for fewer dependency updates.
 
 ## 0.6.2 - 2024-02-14

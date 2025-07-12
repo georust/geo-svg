@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file. See [conven
 
 - Updated to rust 2024 edition
 - Use geo-types instead of geo for fewer dependency updates.
+- Fix lints for clippy 1.88
 
 ## 0.6.2 - 2024-02-14
 #### Bug Fixes

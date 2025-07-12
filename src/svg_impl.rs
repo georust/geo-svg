@@ -130,11 +130,7 @@ impl<T: CoordNum> ToSvgStr for Polygon<T> {
             write!(path, " Z ").unwrap();
         }
 
-        format!(
-            r#"<path fill-rule="evenodd" d="{path}"{style}/>"#,
-            path = path,
-            style = style,
-        )
+        format!(r#"<path fill-rule="evenodd" d="{path}"{style}/>"#)
     }
 
     fn viewbox(&self, style: &Style) -> ViewBox {

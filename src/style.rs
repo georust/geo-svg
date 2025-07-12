@@ -118,22 +118,22 @@ impl Default for Style {
 impl Display for Style {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         if let Some(opacity) = self.opacity {
-            write!(fmt, r#" opacity="{}""#, opacity)?;
+            write!(fmt, r#" opacity="{opacity}""#)?;
         }
         if let Some(fill) = self.fill {
-            write!(fmt, r#" fill="{}""#, fill)?;
+            write!(fmt, r#" fill="{fill}""#)?;
         }
         if let Some(fill_opacity) = self.fill_opacity {
-            write!(fmt, r#" fill-opacity="{}""#, fill_opacity)?;
+            write!(fmt, r#" fill-opacity="{fill_opacity}""#)?;
         }
         if let Some(stroke_color) = self.stroke_color {
-            write!(fmt, r#" stroke="{}""#, stroke_color)?;
+            write!(fmt, r#" stroke="{stroke_color}""#)?;
         }
         if let Some(stroke_width) = self.stroke_width {
-            write!(fmt, r#" stroke-width="{}""#, stroke_width)?;
+            write!(fmt, r#" stroke-width="{stroke_width}""#)?;
         }
         if let Some(stroke_opacity) = self.stroke_opacity {
-            write!(fmt, r#" stroke-opacity="{}""#, stroke_opacity)?;
+            write!(fmt, r#" stroke-opacity="{stroke_opacity}""#)?;
         }
         if let Some(stroke_dasharray) = &self.stroke_dasharray {
             write!(

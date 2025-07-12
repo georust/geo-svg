@@ -11,9 +11,9 @@ pub enum Color {
 impl Display for Color {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         match self {
-            Color::Named(name) => write!(fmt, "{}", name),
-            Color::Rgb(r, g, b) => write!(fmt, "rgb({},{},{})", r, g, b),
-            Color::Hex(hex) => write!(fmt, "#{:06X}", hex),
+            Color::Named(name) => write!(fmt, "{name}"),
+            Color::Rgb(r, g, b) => write!(fmt, "rgb({r},{g},{b})"),
+            Color::Hex(hex) => write!(fmt, "#{hex:06X}"),
             Color::Hsl(h, s, l) => {
                 write!(fmt, "hsl({},{}%,{}%)", h % 360, s.min(&100), l.min(&100))
             }

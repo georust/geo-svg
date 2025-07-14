@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
-## Unreleased
+## 0.8.0 - 2025-07-12
 
 - Updated to rust 2024 edition
 - Use geo-types instead of geo for fewer dependency updates.

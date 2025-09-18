@@ -1,14 +1,14 @@
 use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub enum Color {
-    Named(&'static str),
+pub enum Color<'a> {
+    Named(&'a str),
     Rgb(u8, u8, u8),
     Hex(u32),
     Hsl(u16, u8, u8),
 }
 
-impl Display for Color {
+impl Display for Color<'_> {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         match self {
             Color::Named(name) => write!(fmt, "{name}"),

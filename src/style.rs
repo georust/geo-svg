@@ -85,11 +85,11 @@ pub enum LineJoin {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Style {
+pub struct Style<'a> {
     pub opacity: Option<f32>,
-    pub fill: Option<Color>,
+    pub fill: Option<Color<'a>>,
     pub fill_opacity: Option<f32>,
-    pub stroke_color: Option<Color>,
+    pub stroke_color: Option<Color<'a>>,
     pub stroke_width: Option<f32>,
     pub stroke_opacity: Option<f32>,
     pub stroke_dasharray: Option<Vec<f32>>,
@@ -98,7 +98,7 @@ pub struct Style {
     pub radius: f32,
 }
 
-impl Default for Style {
+impl Default for Style<'_> {
     fn default() -> Self {
         Self {
             opacity: None,
@@ -115,7 +115,7 @@ impl Default for Style {
     }
 }
 
-impl Display for Style {
+impl Display for Style<'_> {
     fn fmt(&self, fmt: &mut Formatter) -> Result {
         if let Some(opacity) = self.opacity {
             write!(fmt, r#" opacity="{opacity}""#)?;

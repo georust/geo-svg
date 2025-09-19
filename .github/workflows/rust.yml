@@ -19,10 +19,12 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy
+          components: clippy, rustfmt
       - name: Build
         run: cargo build --verbose
       - name: Run tests
         run: cargo test --verbose
+      - name: Run fmt check
+        run: cargo fmt --check
       - name: Run clippy
         run: cargo clippy -- -Dwarnings

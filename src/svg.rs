@@ -6,7 +6,7 @@ pub struct Svg<'a> {
     pub items: Vec<&'a dyn ToSvgStr>,
     pub siblings: Vec<Svg<'a>>,
     pub viewbox: ViewBox,
-    pub style: Style,
+    pub style: Style<'a>,
     pub width: Option<Unit>,
     pub height: Option<Unit>,
 }
@@ -17,7 +17,7 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn with_style(mut self, style: &Style) -> Self {
+    pub fn with_style(mut self, style: &Style<'a>) -> Self {
         self.style = style.clone();
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_style(style);
@@ -30,7 +30,7 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn with_color(mut self, color: Color) -> Self {
+    pub fn with_color(mut self, color: Color<'a>) -> Self {
         self.style.fill = Some(color);
         self.style.stroke_color = Some(color);
         for sibling in &mut self.siblings {
@@ -47,7 +47,7 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn with_fill_color(mut self, fill: Color) -> Self {
+    pub fn with_fill_color(mut self, fill: Color<'a>) -> Self {
         self.style.fill = Some(fill);
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_fill_color(fill);
@@ -79,7 +79,7 @@ impl<'a> Svg<'a> {
         self
     }
 
-    pub fn with_stroke_color(mut self, stroke_color: Color) -> Self {
+    pub fn with_stroke_color(mut self, stroke_color: Color<'a>) -> Self {
         self.style.stroke_color = Some(stroke_color);
         for sibling in &mut self.siblings {
             *sibling = sibling.clone().with_stroke_color(stroke_color);
